@@ -1,0 +1,2 @@
+C:/Users/maria/Downloads/New/new_project/android/app/.cxx/Debug/26252f20/x86_64/CMakeFiles/edit_cache.dir
+C:/Users/maria/Downloads/New/new_project/android/app/.cxx/Debug/26252f20/x86_64/CMakeFiles/rebuild_cache.dir

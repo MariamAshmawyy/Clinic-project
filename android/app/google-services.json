@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "421647121646",
+    "project_id": "clinic-project-5e77d",
+    "storage_bucket": "clinic-project-5e77d.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:421647121646:android:2aadb1a3d0f832db17c7ff",
+        "android_client_info": {
+          "package_name": "com.example.new_project"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAYeaCrALZFiEsha1fLi72dIr9Pl2hDGpA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
