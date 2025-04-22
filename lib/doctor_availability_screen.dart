@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-
 class DoctorAvailabilityScreen extends StatelessWidget {
   const DoctorAvailabilityScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -65,9 +65,9 @@ class DoctorAvailabilityScreen extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                _buildAppointmentCard('Today', '2:30 PM', '10:30 PM', true),
-                _buildAppointmentCard('Tomorrow', 'No Available', '', false),
-                _buildAppointmentCard('Saturday 1/3', '4:30 PM', '11:59 PM', true),
+                _buildAppointmentCard(context, 'Today', '2:30 PM', '10:30 PM', true, DateTime.now()),
+                _buildAppointmentCard(context, 'Tomorrow', 'No Available', '', false, DateTime.now().add(const Duration(days: 1))),
+                _buildAppointmentCard(context, 'Saturday 1/3', '4:30 PM', '11:59 PM', true, DateTime(2025, 3, 1)),
               ],
             ),
             const SizedBox(height: 16),
@@ -116,7 +116,7 @@ class DoctorAvailabilityScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildAppointmentCard(String day, String startTime, String endTime, bool available) {
+  Widget _buildAppointmentCard(BuildContext context, String day, String startTime, String endTime, bool available, DateTime appointmentDate) {
     return Expanded(
       child: Card(
         elevation: 4,
@@ -130,12 +130,12 @@ class DoctorAvailabilityScreen extends StatelessWidget {
               const SizedBox(height: 8),
               available
                   ? Column(
-                      children: [
-                        Text(startTime, style: const TextStyle(fontSize: 14)),
-                        const Text('To', style: TextStyle(fontSize: 14)),
-                        Text(endTime, style: const TextStyle(fontSize: 14)),
-                      ],
-                    )
+                children: [
+                  Text(startTime, style: const TextStyle(fontSize: 14)),
+                  const Text('To', style: TextStyle(fontSize: 14)),
+                  Text(endTime, style: const TextStyle(fontSize: 14)),
+                ],
+              )
                   : Text(startTime, style: const TextStyle(fontSize: 14, color: Colors.grey)),
               const SizedBox(height: 8),
               ElevatedButton(
@@ -143,7 +143,18 @@ class DoctorAvailabilityScreen extends StatelessWidget {
                   backgroundColor: available ? Colors.red : Colors.grey,
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                 ),
-                onPressed: available ? () {} : null,
+                onPressed: available
+                    ? () {
+                  Navigator.pushNamed(
+                    context,
+                    '/patient_info',
+                    arguments: {
+                      'appointmentDate': appointmentDate,
+                      'timeSlot': '$startTime - $endTime',
+                    },
+                  );
+                }
+                    : null,
                 child: const Text('Book'),
               ),
             ],

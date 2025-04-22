@@ -1,18 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-class DoctorRecordsScreen extends StatefulWidget {
+class DoctorRecordsScreen extends StatelessWidget {
   const DoctorRecordsScreen({super.key});
 
-  @override
-  _DoctorRecordsScreenState createState() => _DoctorRecordsScreenState();
-}
-
-class _DoctorRecordsScreenState extends State<DoctorRecordsScreen> {
-  final List<Map<String, String>> patientRecords = [
-    {'name': 'John Doe', 'condition': 'Flu', 'lastVisit': '10 May 2024'},
-    {'name': 'Jane Smith', 'condition': 'Allergy', 'lastVisit': '5 May 2024'},
-    {'name': 'Alice Johnson', 'condition': 'Migraine', 'lastVisit': '1 May 2024'},
-  ];
+  /// Fetches all patient appointments using a collectionGroup query
+  Stream<QuerySnapshot> _getAppointments() {
+    return FirebaseFirestore.instance
+        .collectionGroup('appointments') // Works with patients/{uid}/appointments
+        .snapshots();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -21,42 +18,86 @@ class _DoctorRecordsScreenState extends State<DoctorRecordsScreen> {
         title: const Text('Patient Records'),
         centerTitle: true,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: ListView.builder(
-          itemCount: patientRecords.length,
-          itemBuilder: (context, index) {
-            return Card(
-              elevation: 3,
-              margin: const EdgeInsets.symmetric(vertical: 8),
-              child: ListTile(
-                title: Text(patientRecords[index]['name']!),
-                subtitle: Text(
-                  'Condition: ${patientRecords[index]['condition']!}\nLast Visit: ${patientRecords[index]['lastVisit']!}',
+      body: StreamBuilder<QuerySnapshot>(
+        stream: _getAppointments(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          if (snapshot.hasError) {
+            return Center(child: Text("Error: ${snapshot.error}"));
+          }
+
+          if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+            return const Center(child: Text("No patient records found."));
+          }
+
+          final docs = snapshot.data!.docs;
+
+          return ListView.builder(
+            itemCount: docs.length,
+            itemBuilder: (context, index) {
+              final data = docs[index].data() as Map<String, dynamic>;
+
+              final name = data['patientName'] ?? 'Unknown';
+              final illness = data['illness'] ?? 'Not specified';
+
+              DateTime? date;
+              try {
+                date = DateTime.parse(data['appointmentDate']);
+              } catch (_) {
+                date = null;
+              }
+
+              final formattedDate = date != null
+                  ? "${date.day}/${date.month}/${date.year}"
+                  : "Invalid Date";
+
+              return Card(
+                elevation: 3,
+                margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                child: ListTile(
+                  title: Text(name),
+                  subtitle: Text('Condition: $illness\nLast Visit: $formattedDate'),
+                  trailing: IconButton(
+                    icon: const Icon(Icons.arrow_forward, color: Colors.blue),
+                    onPressed: () => _viewPatientDetails(context, data),
+                  ),
                 ),
-                trailing: IconButton(
-                  icon: const Icon(Icons.arrow_forward, color: Colors.blue),
-                  onPressed: () {
-                    _viewPatientDetails(context, patientRecords[index]);
-                  },
-                ),
-              ),
-            );
-          },
-        ),
+              );
+            },
+          );
+        },
       ),
     );
   }
 
-  void _viewPatientDetails(BuildContext context, Map<String, String> patient) {
+  /// Show full patient details in a dialog
+  void _viewPatientDetails(BuildContext context, Map<String, dynamic> patient) {
+    DateTime? date;
+    try {
+      date = DateTime.parse(patient['appointmentDate']);
+    } catch (_) {
+      date = null;
+    }
+
+    final formattedDate =
+    date != null ? date.toLocal().toString().split(" ")[0] : "Invalid Date";
+
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text('Patient: ${patient['name']}'),
-          content: Text(
-            'Condition: ${patient['condition']}\nLast Visit: ${patient['lastVisit']}\n\nMedical Notes: Lorem ipsum dolor sit amet...'
-          ),
+          title: Text('Patient: ${patient['patientName'] ?? "Unknown"}'),
+          content: Text('''
+Email: ${patient['email'] ?? '-'}
+Condition: ${patient['illness'] ?? 'N/A'}
+Last Visit: $formattedDate
+Medications: ${patient['medications'] ?? 'None'}
+Age: ${patient['age'] ?? '-'}
+Gender: ${patient['gender'] ?? '-'}
+'''),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),

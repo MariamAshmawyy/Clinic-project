@@ -20,15 +20,32 @@ class _DoctorBookingScreenState extends State<DoctorBookingScreen> {
 
   void _bookAppointment() {
     if (_selectedTimeSlot == null) {
-      Fluttertoast.showToast(msg: "Please select a time slot.", gravity: ToastGravity.BOTTOM);
+      Fluttertoast.showToast(
+        msg: "Please select a time slot.",
+        gravity: ToastGravity.BOTTOM,
+      );
       return;
     }
+
+    // Optional toast before navigation
     Fluttertoast.showToast(
-      msg: "Appointment booked on ${_selectedDay.toLocal().toString().split(' ')[0]} at $_selectedTimeSlot",
+      msg: "Appointment booked!",
       gravity: ToastGravity.BOTTOM,
       backgroundColor: Colors.green,
       textColor: Colors.white,
     );
+
+    // Navigate to patient info screen
+    Future.delayed(const Duration(milliseconds: 800), () {
+      Navigator.pushNamed(
+        context,
+        '/patient_info',
+        arguments: {
+          'appointmentDate': _selectedDay,
+          'timeSlot': _selectedTimeSlot,
+        },
+      );
+    });
   }
 
   @override
@@ -56,22 +73,26 @@ class _DoctorBookingScreenState extends State<DoctorBookingScreen> {
               },
             ),
             const SizedBox(height: 20),
-            const Text('Select a Time Slot:',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            const Text(
+              'Select a Time Slot:',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
             const SizedBox(height: 10),
             Wrap(
               spacing: 10,
-              children: _timeSlots.map((slot) => ChoiceChip(
-                label: Text(slot),
-                selected: _selectedTimeSlot == slot,
-                onSelected: (selected) {
-                  setState(() {
-                    _selectedTimeSlot = selected ? slot : null;
-                  });
-                },
-                selectedColor: Colors.blue,
-                backgroundColor: Colors.grey[200],
-              )).toList(),
+              children: _timeSlots.map((slot) {
+                return ChoiceChip(
+                  label: Text(slot),
+                  selected: _selectedTimeSlot == slot,
+                  onSelected: (selected) {
+                    setState(() {
+                      _selectedTimeSlot = selected ? slot : null;
+                    });
+                  },
+                  selectedColor: Colors.blue,
+                  backgroundColor: Colors.grey[200],
+                );
+              }).toList(),
             ),
             const Spacer(),
             Center(
@@ -81,8 +102,10 @@ class _DoctorBookingScreenState extends State<DoctorBookingScreen> {
                   backgroundColor: Colors.green,
                   padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
                 ),
-                child: const Text('Confirm Booking',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                child: const Text(
+                  'Confirm Booking',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
               ),
             ),
           ],

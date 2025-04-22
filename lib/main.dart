@@ -9,7 +9,8 @@ import 'doctor_dashboard.dart';
 import 'doctor_availability_screen.dart';
 import 'medical_history_screen.dart';
 import 'profile_settings_screen.dart';
-import 'appointment_booking_screen.dart';
+import 'appointment_booking_screen.dart'; // DoctorBookingScreen
+import 'patient_info_screen.dart';        // Needed for appointment follow-up
 
 // Firebase config
 import 'firebase_options.dart';
@@ -51,7 +52,8 @@ class MyApp extends StatelessWidget {
         '/': (context) => const AuthScreen(),
         '/home': (context) => const HomeScreen(),
         '/doctor_dashboard': (context) => const DoctorDashboardScreen(),
-        '/appointment': (context) => const DoctorBookingScreen(),
+        '/appointment': (context) => const DoctorBookingScreen(),        // Booking screen
+        '/patient_info': (context) => const PatientInfoScreen(),         // Patient info form
         '/availability': (context) => const DoctorAvailabilityScreen(),
         '/history': (context) => const MedicalHistoryScreen(),
         '/profile': (context) => const ProfileSettingsScreen(),

@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'doctor_slots_screen.dart';
 import 'doctor_records_screen.dart';
 
 class DoctorDashboardScreen extends StatelessWidget {
   const DoctorDashboardScreen({super.key});
+
+  void _logout(BuildContext context) async {
+    await FirebaseAuth.instance.signOut();
+    Navigator.of(context).pushReplacementNamed('/');
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -11,6 +17,13 @@ class DoctorDashboardScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Doctor Dashboard'),
         centerTitle: true,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout),
+            tooltip: 'Logout',
+            onPressed: () => _logout(context),
+          ),
+        ],
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -20,8 +33,10 @@ class DoctorDashboardScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Welcome, Doctor!',
-                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+                Text(
+                  'Welcome, Doctor!',
+                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                ),
                 SizedBox(height: 10),
                 Text('Manage your availability and patient records efficiently.'),
               ],
@@ -29,10 +44,10 @@ class DoctorDashboardScreen extends StatelessWidget {
           ),
           Expanded(
             child: GridView.count(
-              crossAxisCount: MediaQuery.of(context).size.width > 600 ? 3 : 2, // Make grid responsive
+              crossAxisCount: MediaQuery.of(context).size.width > 600 ? 3 : 2,
               padding: const EdgeInsets.all(16),
-              crossAxisSpacing: 16, // Adds horizontal spacing between items
-              mainAxisSpacing: 16,  // Adds vertical spacing between items
+              crossAxisSpacing: 16,
+              mainAxisSpacing: 16,
               children: [
                 _buildGridItem(context, 'Manage Slots', Icons.calendar_today, const DoctorSlotsScreen()),
                 _buildGridItem(context, 'Patient Records', Icons.folder_shared, const DoctorRecordsScreen()),
@@ -44,7 +59,6 @@ class DoctorDashboardScreen extends StatelessWidget {
     );
   }
 
-  // Improved grid item with pushReplacement to avoid going back to the dashboard
   Widget _buildGridItem(BuildContext context, String title, IconData icon, Widget screen) {
     return GestureDetector(
       onTap: () => Navigator.pushReplacement(

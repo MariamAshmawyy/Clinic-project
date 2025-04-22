@@ -63,6 +63,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '421647121646',
     projectId: 'clinic-project-5e77d',
     storageBucket: 'clinic-project-5e77d.firebasestorage.app',
-    iosBundleId: 'com.example.newProject',
+    iosBundleId: 'com.example.new_project',
   );
+
 }

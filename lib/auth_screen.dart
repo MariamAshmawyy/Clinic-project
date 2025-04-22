@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'home_screen.dart'; // Make sure to import HomeScreen
-// import 'doctor_dashboard.dart'; // No longer needed
+
+// Screens
+import 'home_screen.dart';
+import 'doctor_dashboard.dart';
 
 class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});
@@ -30,20 +32,27 @@ class _AuthScreenState extends State<AuthScreen> {
       final password = _passwordController.text.trim();
 
       if (_isLogin) {
-        // Login
-        userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(email: email, password: password);
+        userCredential = await _auth.signInWithEmailAndPassword(
+          email: email,
+          password: password,
+        );
       } else {
-        // Sign up
-        userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(email: email, password: password);
+        userCredential = await _auth.createUserWithEmailAndPassword(
+          email: email,
+          password: password,
+        );
       }
 
       if (!mounted) return;
 
-      // Redirect to HomeScreen for all users (no email-specific check)
       if (userCredential.user != null) {
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (_) => const HomeScreen()), // Navigate to HomeScreen for everyone
-        );
+        final userEmail = userCredential.user!.email?.toLowerCase() ?? '';
+
+        if (userEmail == 'drtarek@clinic.com') {
+          Navigator.of(context).pushReplacementNamed('/doctor_dashboard');
+        } else {
+          Navigator.of(context).pushReplacementNamed('/home');
+        }
       }
     } on FirebaseAuthException catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -90,9 +99,7 @@ class _AuthScreenState extends State<AuthScreen> {
                           decoration: const InputDecoration(labelText: 'Email'),
                           keyboardType: TextInputType.emailAddress,
                           validator: (value) {
-                            if (value == null ||
-                                !value.contains('@') ||
-                                value.trim().isEmpty) {
+                            if (value == null || !value.contains('@') || value.trim().isEmpty) {
                               return 'Please enter a valid email address.';
                             }
                             return null;
