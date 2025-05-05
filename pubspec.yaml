@@ -24,6 +24,10 @@ dependencies:
   sqflite: ^2.4.2
   path: ^1.9.1
   intl: ^0.20.2
+  dio: ^5.8.0+1
+  googleapis_auth: ^2.0.0
+  firebase_messaging: ^15.2.5
+  flutter_local_notifications: ^19.1.0
 
 
 

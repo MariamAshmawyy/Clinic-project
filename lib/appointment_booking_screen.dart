@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:new_project/notification_helper.dart';  // import your NotificationHelper
 
 class DoctorBookingScreen extends StatefulWidget {
   const DoctorBookingScreen({super.key});
@@ -57,6 +58,14 @@ class _DoctorBookingScreenState extends State<DoctorBookingScreen> {
       gravity: ToastGravity.BOTTOM,
       backgroundColor: Colors.green,
       textColor: Colors.white,
+    );
+
+    // Trigger the notification after booking
+    NotificationsHelper().sendNotifications(
+      topic: 'tHrjcGSXufhCKPtCVhg3hz08sph2', // the user ID to send notification to
+      title: 'Appointment Booked',
+      body: 'Your appointment on ${_selectedDayKey} at ${_selectedTimeSlot} is confirmed!',
+      userId: "76ziUHC8N0M0gBRqiAXyGd5GgNi2", // You can replace this with actual user ID if required
     );
 
     Future.delayed(const Duration(milliseconds: 800), () {
