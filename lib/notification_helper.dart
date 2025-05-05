@@ -167,7 +167,7 @@ class NotificationsHelper {
 
       // change your project id
       const String urlEndPoint =
-          "https://fcm.googleapis.com/v1/projects/untitled-a464e/messages:send";
+          "https://fcm.googleapis.com/v1/projects/clinic-project-5e77d/messages:send";
 
       Dio dio = Dio();
       dio.options.headers['Content-Type'] = 'application/json';
