@@ -20,9 +20,7 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-
   final user = FirebaseAuth.instance.currentUser;
-
   String initialRoute;
   if (user != null && user.email == 'drtarek@clinic.com') {
     initialRoute = '/doctor_dashboard';

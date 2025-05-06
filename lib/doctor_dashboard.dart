@@ -2,9 +2,23 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'doctor_slots_screen.dart';
 import 'doctor_records_screen.dart';
+import 'package:new_project/notification_helper.dart';
 
-class DoctorDashboardScreen extends StatelessWidget {
+class DoctorDashboardScreen extends StatefulWidget {
   const DoctorDashboardScreen({super.key});
+
+  @override
+  State<DoctorDashboardScreen> createState() => _DoctorDashboardScreenState();
+}
+
+class _DoctorDashboardScreenState extends State<DoctorDashboardScreen> {
+  /// ❷  This runs once when the doctor dashboard appears.
+  ///     We initialise foreground‑push handling here.
+  @override
+  void initState() {
+    super.initState();
+    NotificationsHelper().initNotifications();      // show toasts while app open
+  }
 
   void _logout(BuildContext context) async {
     await FirebaseAuth.instance.signOut();

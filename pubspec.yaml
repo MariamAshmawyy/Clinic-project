@@ -40,3 +40,4 @@ flutter:
   uses-material-design: true
   assets:
     - assets/doctor_image.jpg
+    - assets/Clinic-project-5e77d.json
