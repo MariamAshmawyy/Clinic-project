@@ -4,7 +4,6 @@ import 'package:intl/intl.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:new_project/notification_helper.dart';  // import your NotificationHelper
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 class DoctorBookingScreen extends StatefulWidget {
   const DoctorBookingScreen({super.key});
 
@@ -63,10 +62,10 @@ class _DoctorBookingScreenState extends State<DoctorBookingScreen> {
 print(FirebaseAuth.instance.currentUser!.uid);
     // Trigger the notification after booking
     NotificationsHelper().sendNotifications(
-      topic: '76ziUHC8N0M0gBRqiAXyGd5GgNi2', // Use the current user's UID as the topic
+      topic: FirebaseAuth.instance.currentUser!.uid, // Use the current user's UID as the topic
       title: 'Appointment Booked',
-      body: 'Your appointment on ${_selectedDayKey} at ${_selectedTimeSlot} is confirmed!',
-      userId: 'tHrjcGSXufhCKPtCVhg3hz08sph2', // You can replace this with actual user ID if required
+      body: 'An appointment on $_selectedDayKey at $_selectedTimeSlot is Booked!',
+      userId: FirebaseAuth.instance.currentUser!.uid, // You can replace this with actual user ID if required
     );
 
 
@@ -109,7 +108,7 @@ print(FirebaseAuth.instance.currentUser!.uid);
             const SizedBox(height: 20),
             Expanded(
               child: GridView.builder(
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 1,
                   childAspectRatio: 1.5,
                   crossAxisSpacing: 16,
@@ -130,7 +129,7 @@ print(FirebaseAuth.instance.currentUser!.uid);
                           color: Colors.grey.withOpacity(0.3),
                           spreadRadius: 1,
                           blurRadius: 5,
-                          offset: Offset(0, 3), // changes position of shadow
+                          offset: const Offset(0, 3), // changes position of shadow
                         ),
                       ],
                     ),
@@ -148,7 +147,7 @@ print(FirebaseAuth.instance.currentUser!.uid);
                           ),
                           const SizedBox(height: 10),
                           if (slots.isEmpty) ...[
-                            Text("No slots available", style: TextStyle(color: Colors.grey)),
+                            const Text("No slots available", style: TextStyle(color: Colors.grey)),
                           ],
                           ...slots.map((slot) {
                             return GestureDetector(
@@ -174,7 +173,7 @@ print(FirebaseAuth.instance.currentUser!.uid);
                                 ),
                               ),
                             );
-                          }).toList(),
+                          }),
                           const Spacer(),
                           ElevatedButton(
                             onPressed: slots.isEmpty || _selectedTimeSlot == null

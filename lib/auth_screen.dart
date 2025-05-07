@@ -3,8 +3,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';  // Import Firebase Messaging
 
 // Screens
-import 'home_screen.dart';
-import 'doctor_dashboard.dart';
 
 class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});
@@ -51,7 +49,7 @@ class _AuthScreenState extends State<AuthScreen> {
 
         // After login, subscribe the user to the topic
         String userId = userCredential.user!.uid;
-        await FirebaseMessaging.instance.subscribeToTopic('tHrjcGSXufhCKPtCVhg3hz08sph2'); // Subscribing to the topic
+        await FirebaseMessaging.instance.subscribeToTopic(userId); // Subscribing to the topic
         print('Successfully subscribed to topic: $userId');
 
         if (userEmail == 'drtarek@clinic.com') {
