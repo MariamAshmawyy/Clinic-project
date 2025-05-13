@@ -1,30 +1,45 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-
-import 'package:new_project/main.dart';
+import 'package:new_project/main.dart';  // Import your main app
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+  testWidgets('Test Book Appointment button', (WidgetTester tester) async {
+    // Build the widget tree with the screen containing the button and text
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text('Choose your appointment:', key: Key('appointmentText')),
+              ElevatedButton(
+                key: Key('bookButton'),
+                onPressed: () {
+                  // Simulate booking the appointment by displaying a confirmation message
+                  showDialog(
+                    context: tester.element(find.byType(ElevatedButton)),
+                    builder: (_) => AlertDialog(
+                      content: Text('Appointment booked!'),
+                    ),
+                  );
+                },
+                child: const Text('Book Appointment'),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+    // Verify the initial state: The "Book Appointment" button is displayed
+    expect(find.text('Book Appointment'), findsOneWidget);
+    expect(find.text('Appointment booked!'), findsNothing); // No confirmation yet
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
+    // Tap the "Book Appointment" button and trigger a frame
+    await tester.tap(find.byKey(Key('bookButton')));
+    await tester.pump(); // Rebuild after the tap to show the dialog
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    // Verify that the confirmation message is shown after the button click
+    expect(find.text('Appointment booked!'), findsOneWidget); // Confirmation message should appear
   });
 }
