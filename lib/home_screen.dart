@@ -10,9 +10,17 @@ class HomeScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Home'),
         centerTitle: true,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pushReplacementNamed(context, '/'); // Replace '/auth' with your auth screen route name
+          },
+        ),
       ),
+
       body: SingleChildScrollView(
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
               padding: const EdgeInsets.all(16.0),
@@ -21,7 +29,7 @@ class HomeScreen extends StatelessWidget {
                   FadeInLeft(
                     child: const CircleAvatar(
                       radius: 50,
-                      backgroundImage: AssetImage('assets/doctor_image.jpg'), // Add doctor photo here
+                      backgroundImage: AssetImage('assets/doctor_image.jpg'),
                     ),
                   ),
                   const SizedBox(width: 16),
@@ -49,17 +57,53 @@ class HomeScreen extends StatelessWidget {
                 ],
               ),
             ),
-            GridView.count(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              crossAxisCount: 2,
-              padding: const EdgeInsets.all(16),
-              children: [
-                _buildGridItem(context, 'Clinic Booking', Icons.local_hospital, '/appointment'),
-                _buildGridItem(context, 'Available slots', Icons.calendar_today,'/availability'),
-                _buildGridItem(context, 'About Us', Icons.info, '/history'),
-                _buildGridItem(context, 'Packages', Icons.card_giftcard, '/profile'),
-              ],
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Divider(),
+                  SizedBox(height: 8),
+                  Text(
+                    'Fees: 350 EGP',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                  ),
+                  SizedBox(height: 4),
+                  Text(
+                    '200 EGP with Shamel',
+                    style: TextStyle(fontSize: 14, color: Colors.green),
+                  ),
+                  SizedBox(height: 12),
+                  Text(
+                    'Waiting Time: 21 min',
+                    style: TextStyle(fontSize: 14),
+                  ),
+                  SizedBox(height: 12),
+                  Text(
+                    'Location: Nasr City, Elgehad Street',
+                    style: TextStyle(fontSize: 14),
+                  ),
+                  SizedBox(height: 12),
+                  Text(
+                    'You\'ll earn 350 points after booking',
+                    style: TextStyle(fontSize: 14, color: Colors.orange),
+                  ),
+                  SizedBox(height: 12),
+                  Text(
+                    'Follow-up is for Free within 10 Days',
+                    style: TextStyle(fontSize: 14, color: Colors.blueAccent),
+                  ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: _buildGridItem(
+                context,
+                'Clinic Booking',
+                Icons.local_hospital,
+                '/appointment',
+              ),
             ),
           ],
         ),
@@ -81,13 +125,16 @@ class HomeScreen extends StatelessWidget {
       child: Card(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         elevation: 4,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(icon, size: 50, color: Colors.blue),
-            const SizedBox(height: 8),
-            Text(title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-          ],
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 20.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(icon, size: 50, color: Colors.blue),
+              const SizedBox(height: 8),
+              Text(title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+            ],
+          ),
         ),
       ),
     );

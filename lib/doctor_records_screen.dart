@@ -17,6 +17,12 @@ class DoctorRecordsScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Patient Records'),
         centerTitle: true,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pushReplacementNamed(context, '/doctor_dashboard');
+          },
+        ),
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: _getAppointments(),
@@ -39,6 +45,7 @@ class DoctorRecordsScreen extends StatelessWidget {
             itemCount: docs.length,
             itemBuilder: (context, index) {
               final data = docs[index].data() as Map<String, dynamic>;
+              final docRef = docs[index].reference;
 
               final name = data['patientName'] ?? 'Unknown';
               final illness = data['illness'] ?? 'Not specified';
@@ -61,8 +68,8 @@ class DoctorRecordsScreen extends StatelessWidget {
                   title: Text(name),
                   subtitle: Text('Condition: $illness\nLast Visit: $formattedDate'),
                   trailing: IconButton(
-                    icon: const Icon(Icons.arrow_forward, color: Colors.blue),
-                    onPressed: () => _viewPatientDetails(context, data),
+                    icon: const Icon(Icons.edit, color: Colors.blue),
+                    onPressed: () => _viewPatientDetails(context, data, docRef),
                   ),
                 ),
               );
@@ -70,11 +77,25 @@ class DoctorRecordsScreen extends StatelessWidget {
           );
         },
       ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () => Navigator.pushReplacementNamed(context, '/doctor_dashboard'),
+        icon: const Icon(Icons.dashboard),
+        label: const Text('Back to Dashboard'),
+      ),
     );
   }
 
-  /// Show full patient details in a dialog
-  void _viewPatientDetails(BuildContext context, Map<String, dynamic> patient) {
+  /// Show editable patient details
+  void _viewPatientDetails(
+      BuildContext context,
+      Map<String, dynamic> patient,
+      DocumentReference docRef,
+      ) {
+    final TextEditingController conditionController =
+    TextEditingController(text: patient['illness'] ?? '');
+    final TextEditingController medicationsController =
+    TextEditingController(text: patient['medications'] ?? '');
+
     DateTime? date;
     try {
       date = DateTime.parse(patient['appointmentDate']);
@@ -90,18 +111,61 @@ class DoctorRecordsScreen extends StatelessWidget {
       builder: (context) {
         return AlertDialog(
           title: Text('Patient: ${patient['patientName'] ?? "Unknown"}'),
-          content: Text('''
-Email: ${patient['email'] ?? '-'}
-Condition: ${patient['illness'] ?? 'N/A'}
-Last Visit: $formattedDate
-Medications: ${patient['medications'] ?? 'None'}
-Age: ${patient['age'] ?? '-'}
-Gender: ${patient['gender'] ?? '-'}
-'''),
+          content: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Email: ${patient['email'] ?? '-'}'),
+                const SizedBox(height: 10),
+                Text('Last Visit: $formattedDate'),
+                const SizedBox(height: 10),
+                TextField(
+                  controller: conditionController,
+                  decoration: const InputDecoration(
+                    labelText: 'Condition',
+                    border: OutlineInputBorder(),
+                  ),
+                  maxLines: 2,
+                ),
+                const SizedBox(height: 10),
+                TextField(
+                  controller: medicationsController,
+                  decoration: const InputDecoration(
+                    labelText: 'Medications',
+                    border: OutlineInputBorder(),
+                  ),
+                  maxLines: 3,
+                ),
+                const SizedBox(height: 10),
+                Text('Age: ${patient['age'] ?? '-'}'),
+                Text('Gender: ${patient['gender'] ?? '-'}'),
+              ],
+            ),
+          ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('Close'),
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                try {
+                  await docRef.update({
+                    'illness': conditionController.text.trim(),
+                    'medications': medicationsController.text.trim(),
+                  });
+                  Navigator.pop(context);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Patient record updated successfully')),
+                  );
+                } catch (e) {
+                  Navigator.pop(context);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Failed to update record: $e')),
+                  );
+                }
+              },
+              child: const Text('Save'),
             ),
           ],
         );

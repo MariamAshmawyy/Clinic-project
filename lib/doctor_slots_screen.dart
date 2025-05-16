@@ -105,6 +105,12 @@ class DoctorSlotsScreenState extends State<DoctorSlotsScreen> {
       appBar: AppBar(
         title: const Text('Manage Weekly Slots'),
         centerTitle: true,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pushReplacementNamed(context, '/doctor_dashboard');
+          },
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
